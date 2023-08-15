@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* CSS styles */
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .raindrop {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100%);
+        opacity: 1;
+      }
+
+      80% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="rain"></div>
+
+  <h1></h1>
+  <p></p>
+
+  <script>
+    // JavaScript code
+    document.addEventListener('DOMContentLoaded', function() {
+      const rainContainer = document.querySelector('.rain');
+
+      const images = [
+        ['static/img/1.png', 'static/img/2.png', 'static/img/3.png', 'static/img/4.png', 'static/img/5.png',
+         'static/img/6.png', 'static/img/7.png', 'static/img/8.png', 'static/img/9.png', 'static/img/10.png',
+         'static/img/11.png', 'static/img/12.png', 'static/img/13.png', 'static/img/14.png', 'static/img/15.png',
+         'static/img/16.png', 'static/img/17.png', 'static/img/18.png', 'static/img/19.png', 'static/img/20.png',
+         'static/img/21.png', 'static/img/22.png', 'static/img/23.png', 'static/img/24.png', 'static/img/25.png',
+         'static/img/26.png', 'static/img/27.png', ]];
+
+      function createRaindrop() {
+        const raindrop = document.createElement('div');
+        raindrop.classList.add('raindrop');
+        raindrop.style.left = Math.random() * 100 + '%';
+        raindrop.style.animationDuration = 4 + 's';
+        rainContainer.appendChild(raindrop);
+
+        const animationDuration = parseFloat(raindrop.style.animationDuration) * 1000;
+        const imageList = images[Math.floor(Math.random() * images.length)];
+        const intervalTime = animationDuration / (imageList.length * 4);
+        let imageIndex = 0;
+
+        setInterval(() => {
+          raindrop.style.backgroundImage = `url('${imageList[imageIndex]}')`;
+          imageIndex = (imageIndex + 1) % imageList.length;
+        }, intervalTime);
+
+        setTimeout(() => {
+          const stationaryRaindrop = document.createElement('div');
+          stationaryRaindrop.classList.add('raindrop');
+          stationaryRaindrop.style.left = raindrop.style.left;
+          stationaryRaindrop.style.top = raindrop.style.top;
+          stationaryRaindrop.style.animationDuration = '0s';
+          stationaryRaindrop.style.transform = 'none';
+          stationaryRaindrop.style.opacity = '1';
+          stationaryRaindrop.style.pointerEvents = 'none';
+          rainContainer.appendChild(stationaryRaindrop);
+
+          const opacityCheckInterval = setInterval(() => {
+            const opacity = parseFloat(window.getComputedStyle(raindrop).getPropertyValue('opacity'));
+            if (opacity === 0) {
+              raindrop.remove();
+              clearInterval(opacityCheckInterval);
+              setTimeout(createRaindrop, 100);
+            }
+          }, 100);
+
+        }, animationDuration * 0.8);
+      }
+
+      for (let i = 0; i < 25; i++) {
+        setTimeout(createRaindrop, i * 700);
+      }
+    });
+  </script>
+</body>
+</html>
